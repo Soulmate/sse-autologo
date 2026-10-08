@@ -15,8 +15,8 @@
   #app { display: flex; height: 100vh; }
   #stage { flex: 1; min-width: 0; position: relative; background: var(--stage);
     background-image: radial-gradient(circle at 50% 50%, #12151b 0, #07080a 70%); }
-  #view { position: absolute; inset: 24px; }
-  #poster { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+  #view { position: absolute; inset: 24px; display: grid; place-items: center; }
+  #poster { display: block; touch-action: none; user-select: none; box-shadow: 0 0 0 1px #222833, 0 10px 40px rgba(0,0,0,.5); }
   #poster.pan { cursor: grab; } #poster.move { cursor: move; } #poster.dragging { cursor: grabbing; }
   #hint { position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%); color: var(--muted);
     background: rgba(10,12,16,.75); padding: 8px 14px; border-radius: 8px; pointer-events: none; font-size: 12px;
@@ -86,6 +86,19 @@
   #toast.show { transform: translateX(-50%) translateY(0); }
   #toast.err { border-color: var(--danger); color: var(--danger); }
   .hidden { display: none !important; }
+  #basic summary { cursor: default; } #basic summary::before { display: none; }
+  #basic summary:hover { background: none; }
+  .step { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent2); color: #fff; font-size: 11px; font-weight: 700; }
+  .status { font-size: 12px; color: var(--muted); }
+  .status.ok { color: #8fd6a0; }
+  .status.bad { color: var(--danger); }
+  #advToggle { width: 100%; border: none; border-radius: 0; border-bottom: 1px solid var(--line); background: var(--bg);
+    color: var(--muted); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
+  #advToggle:hover { color: var(--text); background: #11141a; }
+  #advToggle i { width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg); transition: transform .15s; }
+  #advToggle[aria-expanded="true"] i { transform: rotate(-135deg); }
 </style>
 </head>
 <body>
@@ -114,8 +127,8 @@
             <path class="lc" d="M2493.26,1655.46v168.08h-665.35c-39.21,0-56.03,9.82-63.03,16.82c-7,7-11.2,12.6-11.2,29.41 c0,16.82,4.2,23.82,11.2,30.82s23.82,15.4,63.03,15.4c156.89,0,313.76,0,472.05,0c0,0,0,0,1.4,0 c68.64,0,130.27,19.62,173.69,58.84c44.82,40.62,67.23,99.45,67.23,155.47s-22.4,113.47-67.23,154.09s-106.46,60.23-175.09,60.23 h-687.75v-168.09h687.75c37.82,0,54.63-9.8,63.03-16.8c7.02-7,11.22-14,11.22-29.42c0-16.8-4.2-23.8-11.22-30.81 c-8.4-7.02-23.8-15.42-61.63-15.42h-1.4c-156.89,0-315.16,0-472.05,0c-68.63,0-131.67-19.6-175.08-58.83 c-44.84-40.62-67.24-99.45-67.24-155.49c0-56.03,22.4-114.85,67.24-154.07c43.41-40.62,106.45-60.23,175.08-60.23H2493.26z"/>
             <path class="lc" d="M3928,1655.7v165.34h-661.35v92.31h365.12v165.34h-365.12v100.58H3928v165.34h-826.69v-165.34v-358.23V1655.7 H3928z"/>
           </clipPath>
-          <text id="tag" font-family="GlassInter" font-weight="300"></text>
-          <clipPath id="tagClip"><text id="tagClipText" font-family="GlassInter" font-weight="300"></text></clipPath>
+          <text id="tag"></text>
+          <clipPath id="tagClip"><text id="tagClipText"></text></clipPath>
           <linearGradient id="logoGrad" x1="0" y1="0" x2="0" y2="1">
             <stop id="lgTop" offset="0"/><stop id="lgBot" offset="1"/>
           </linearGradient>
@@ -128,21 +141,27 @@
         <use href="#bg"/>
 
         <g id="logoLayer">
-          <use href="#logo" filter="url(#L_drop)"/>
-          <g clip-path="url(#logoClip)">
-            <use href="#bg" filter="url(#L_frost)"/>
-            <use id="logoBody" href="#logo" fill="url(#logoGrad)"/>
+          <g id="logoGlass">
+            <use href="#logo" filter="url(#L_drop)"/>
+            <g clip-path="url(#logoClip)">
+              <use href="#bg" filter="url(#L_frost)"/>
+              <use id="logoBody" href="#logo" fill="url(#logoGrad)"/>
+            </g>
+            <use href="#logo" filter="url(#L_bevel)"/>
           </g>
-          <use href="#logo" filter="url(#L_bevel)"/>
+          <use id="logoFlat" href="#logo"/>
         </g>
 
         <g id="tagLayer">
-          <use href="#tag" filter="url(#T_drop)"/>
-          <g clip-path="url(#tagClip)">
-            <use href="#bg" filter="url(#T_frost)"/>
-            <use id="tagBody" href="#tag" fill="url(#tagGrad)"/>
+          <g id="tagGlass">
+            <use href="#tag" filter="url(#T_drop)"/>
+            <g clip-path="url(#tagClip)">
+              <use href="#bg" filter="url(#T_frost)"/>
+              <use id="tagBody" href="#tag" fill="url(#tagGrad)"/>
+            </g>
+            <use href="#tag" filter="url(#T_bevel)"/>
           </g>
-          <use href="#tag" filter="url(#T_bevel)"/>
+          <use id="tagFlat" href="#tag"/>
         </g>
 
         <g id="overlay" pointer-events="none" fill="none">
@@ -151,12 +170,14 @@
         </g>
       </svg>
     </div>
-    <div id="hint">Перетащите картинку в окно, вставьте Ctrl+V или нажмите «Открыть…»</div>
-    <div id="dropzone">Отпустите файл: картинка или JSON настроек</div>
+    <div id="hint">Перетащите в окно JSON с настройками и картинку</div>
+    <div id="dropzone">Отпустите файл: картинка, шрифт или JSON настроек</div>
   </div>
   <aside id="panel">
     <header><b>Glass Logo</b><span>стеклянный логотип поверх картинки</span></header>
-    <div id="sections"></div>
+    <div id="basic"></div>
+    <button id="advToggle" aria-expanded="false"><span>Все настройки</span><i></i></button>
+    <div id="sections" class="hidden"></div>
   </aside>
 </div>
 <div id="toast"></div>
@@ -175,19 +196,24 @@ const LB = { x0: 96.48, y0: 1655.46, x1: 3928, y1: 2348.2 };
 LB.w = LB.x1 - LB.x0; LB.h = LB.y1 - LB.y0;
 // prototype reference: logo 115.71px tall with 21px tagline -> text filter unit = F * REF_T
 const REF_T = (LB.h * 0.167036) / 21;
-const CAP = 0.7275;              // Inter cap height / em
+const CAP_INTER = 0.7275;        // Inter cap height / em
 const SHADE_W = 1.9;             // bottom inner edge offset, % of unit
 const SHADE_BLUR = 1.037;        // its blur, % of unit
 const RIM_BLUR_K = 0.3125;       // rim blur relative to rim thickness
 const STORE_KEY = 'glassLogo.settings.v1';
 
+// settings schema version; bump on any incompatible change and describe it in README.md
+const SETTINGS_VERSION = 1;
 const DEFAULTS = {
+  version: SETTINGS_VERSION,
   out:   { w: 1920, h: 1080 },
   crop:  { zoom: 1, px: 50, py: 50 },
-  logo:  { x: 4.31, y: 35.07, width: 38.28, top: '#d6d9ea', bot: '#9da3bd' },
+  logo:  { x: 4.31, y: 35.07, width: 38.28, opacity: 1, glass: true, flat: '#ffffff', top: '#d6d9ea', bot: '#9da3bd' },
   text:  { on: true, content: 'YOUR PARTNER FOR TIME CRITICAL SHIPMENTS', mode: 'under',
-           size: 18.15, spacing: 0.46, gap: 40.6, x: 4.31, y: 54, density: 0.69,
-           ownColor: false, top: '#d6d9ea', bot: '#9da3bd' },
+           size: 18.15, spacing: 0.46, gap: 40.6, x: 4.31, y: 54, density: 0.69, opacity: 1, glass: true, flat: '#ffffff',
+           ownColor: false, top: '#d6d9ea', bot: '#9da3bd',
+           // kind: builtin (Inter Light) | system (by name) | file (embedded data URL)
+           font: { kind: 'builtin', family: 'Inter Light', weight: 300, data: '' } },
   glass: { density: 0.44, frost: 2.59, rimKey: 0.9, rimWidth: 1.38, shade: 0.45, shadeColor: '#1b2140',
            bump: 3.02, surface: 4.32, sheen: 0.35 },
   light1:{ az: 235, el: 40, k: 0.9, color: '#ffffff', exp: 18 },
@@ -210,7 +236,50 @@ const attrs = (el, o) => { for (const k in o) el.setAttribute(k, o[k]); };
 
 // ---------- font ----------
 const FONT_CSS = `@font-face{font-family:'GlassInter';font-weight:300;font-style:normal;src:url(data:font/woff2;base64,${FONT_B64}) format('woff2');}`;
-$('fontStyle').textContent = FONT_CSS;
+const SYSTEM_FONTS = ['Arial', 'Helvetica', 'Helvetica Neue', 'Segoe UI', 'Roboto', 'Ubuntu', 'Open Sans', 'Montserrat',
+  'Futura', 'Avenir', 'Avenir Next', 'Gill Sans', 'Calibri', 'Verdana', 'Tahoma', 'Trebuchet MS', 'Century Gothic',
+  'Franklin Gothic Medium', 'Bahnschrift', 'Arial Narrow', 'SF Pro Display', 'DejaVu Sans', 'Noto Sans', 'Liberation Sans',
+  'Georgia', 'Times New Roman', 'Palatino Linotype', 'Garamond', 'Cambria', 'Courier New', 'Consolas', 'Menlo', 'Impact'];
+let fontCssKey = null;
+function applyFontCSS() {
+  const ft = S.text.font;
+  const key = ft.kind === 'file' ? ft.data.length + ft.data.slice(-64) : '';
+  if (key === fontCssKey) return;
+  fontCssKey = key;
+  // a user file is declared for every weight so the browser never synthesizes bold/thin on it
+  $('fontStyle').textContent = FONT_CSS + (ft.kind === 'file' && ft.data
+    ? `@font-face{font-family:'GlassUser';font-weight:1 1000;font-style:normal;src:url(${ft.data});}` : '');
+}
+function fontFamily() {
+  const ft = S.text.font;
+  if (ft.kind === 'file' && ft.data) return 'GlassUser';
+  if (ft.kind === 'system' && ft.family) return `"${ft.family.replace(/"/g, '')}", sans-serif`;
+  return 'GlassInter';
+}
+function fontWeight() { return S.text.font.kind === 'system' ? S.text.font.weight : S.text.font.kind === 'file' ? 400 : 300; }
+// cap height / em of the current font, measured on canvas (used to hang the tagline under the logo)
+const capCache = {};
+function capRatio() {
+  const fam = fontFamily(), wt = fontWeight(), key = wt + ' ' + fam + fontCssKey;
+  if (fam === 'GlassInter') return CAP_INTER;
+  if (capCache[key]) return capCache[key];
+  const g = (capRatio.c ||= document.createElement('canvas').getContext('2d'));
+  g.font = `${wt} 200px ${fam}`;
+  const r = g.measureText('H').actualBoundingBoxAscent / 200;
+  if (!(r > 0.3 && r < 1.2)) return CAP_INTER;
+  if (document.fonts.check(`${wt} 200px ${fam}`)) capCache[key] = r;
+  return r;
+}
+// is a local font installed? compare glyph widths against generic fallbacks
+function fontInstalled(name) {
+  const g = (fontInstalled.c ||= document.createElement('canvas').getContext('2d'));
+  const txt = 'mmmmmmmmmlli WQ@#0123', w = (f) => { g.font = `72px ${f}`; return g.measureText(txt).width; };
+  return ['monospace', 'serif', 'sans-serif'].some(b => w(`"${name}", ${b}`) !== w(b));
+}
+function loadFontThenRender() {
+  document.fonts.load(`${fontWeight()} 40px ${fontFamily()}`, S.text.content || 'A').then(() => update({ ui: true })).catch(() => {});
+}
+applyFontCSS();
 
 // ---------- filters (built once, attributes driven from JS) ----------
 function filterMarkup(p) {
@@ -294,7 +363,7 @@ function logoGeom() {
 }
 function textGeom(lg) {
   const F = S.text.size / 100 * lg.h;
-  if (S.text.mode === 'under') return { F, x: lg.x, y: lg.y + lg.h + S.text.gap / 100 * lg.h + CAP * F, fit: lg.w };
+  if (S.text.mode === 'under') return { F, x: lg.x, y: lg.y + lg.h + S.text.gap / 100 * lg.h + capRatio() * F, fit: lg.w };
   return { F, x: S.text.x / 100 * S.out.w, y: S.text.y / 100 * S.out.h, fit: 0 };
 }
 
@@ -307,7 +376,12 @@ function measurePreviewScale() {
 function render(ss) {
   const { w: W, h: H } = S.out;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  if (ss === undefined) { measurePreviewScale(); ss = previewScale; }
+  if (ss === undefined) {
+    // size the preview to the exact frame aspect so nothing outside the frame is visible
+    const v = $('view'), k = Math.min(v.clientWidth / W, v.clientHeight / H);
+    svg.style.width = Math.floor(W * k) + 'px'; svg.style.height = Math.floor(H * k) + 'px';
+    measurePreviewScale(); ss = previewScale;
+  }
 
   // background (cover)
   attrs($('bgRect'), { width: W, height: H });
@@ -325,6 +399,14 @@ function render(ss) {
   svg.querySelectorAll('#logoClip .lc').forEach(p => p.setAttribute('transform', tr));
   $('lgTop').setAttribute('stop-color', S.logo.top); $('lgBot').setAttribute('stop-color', S.logo.bot);
   $('logoBody').setAttribute('opacity', S.glass.density);
+  $('logoLayer').setAttribute('opacity', S.logo.opacity);
+  $('tagLayer').setAttribute('opacity', S.text.opacity);
+  // glass off: plain fill, only color + layer opacity
+  for (const [p, o] of [['logo', S.logo], ['tag', S.text]]) {
+    $(p + 'Glass').style.display = o.glass ? '' : 'none';
+    $(p + 'Flat').style.display = o.glass ? 'none' : '';
+    $(p + 'Flat').setAttribute('fill', o.flat);
+  }
   const lbox = { x: lg.x, y: lg.y, width: lg.w, height: lg.h };
   setFilters('L', lg.h, lbox, ss);
   attrs($('ovLogo'), { x: f(lbox.x), y: f(lbox.y), width: f(lbox.width), height: f(lbox.height), 'stroke-width': f(W / 900) });
@@ -333,10 +415,11 @@ function render(ss) {
   $('tagLayer').style.display = S.text.on ? '' : 'none';
   $('ovTag').style.display = S.text.on ? '' : 'none';
   if (S.text.on) {
-    const t = textGeom(lg);
+    applyFontCSS();
+    const t = textGeom(lg), fam = fontFamily(), wt = fontWeight();
     for (const el of [$('tag'), $('tagClipText')]) {
       if (el.textContent !== S.text.content) el.textContent = S.text.content;
-      attrs(el, { x: f(t.x), y: f(t.y), 'font-size': f(t.F) });
+      attrs(el, { x: f(t.x), y: f(t.y), 'font-size': f(t.F), 'font-family': fam, 'font-weight': wt });
       if (t.fit > 0) {
         attrs(el, { textLength: f(t.fit), lengthAdjust: 'spacing', 'letter-spacing': 0 });
       } else {
@@ -349,7 +432,7 @@ function render(ss) {
     $('tagBody').setAttribute('opacity', S.text.density);
     let tb;
     try { tb = $('tag').getBBox(); } catch (e) { tb = null; }
-    if (!tb || !tb.width) tb = { x: t.x, y: t.y - CAP * t.F, width: t.fit || t.F * 20, height: t.F };
+    if (!tb || !tb.width) tb = { x: t.x, y: t.y - capRatio() * t.F, width: t.fit || t.F * 20, height: t.F };
     setFilters('T', t.F * REF_T, tb, ss);
     attrs($('ovTag'), { x: f(tb.x), y: f(tb.y), width: f(tb.width), height: f(tb.height), 'stroke-width': f(W / 900) });
   }
@@ -377,14 +460,24 @@ function mergeDeep(base, src) {
   return base;
 }
 function sanitize() {
+  S.version = SETTINGS_VERSION;
+  S.logo.opacity = clamp(S.logo.opacity, 0, 1); S.text.opacity = clamp(S.text.opacity, 0, 1);
+  const ft = S.text.font;
+  if (!['builtin', 'system', 'file'].includes(ft.kind) || (ft.kind === 'file' && !/^data:/.test(ft.data))) Object.assign(ft, clone(DEFAULTS.text.font));
+  if (ft.kind !== 'file') ft.data = '';
+  ft.weight = clamp(Math.round(ft.weight / 100) * 100 || 400, 100, 900);
   S.out.w = clamp(Math.round(S.out.w) || 1920, 16, 8192);
   S.out.h = clamp(Math.round(S.out.h) || 1080, 16, 8192);
   S.crop.zoom = clamp(S.crop.zoom, 1, 5);
   S.crop.px = clamp(S.crop.px, 0, 100); S.crop.py = clamp(S.crop.py, 0, 100);
 }
 function saveLocal() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) {} }
+let restoredFromLocal = false;
 function loadLocal() {
-  try { const s = localStorage.getItem(STORE_KEY); if (s) S = mergeDeep(clone(DEFAULTS), JSON.parse(s)); } catch (e) {}
+  try {
+    const s = localStorage.getItem(STORE_KEY), o = s && JSON.parse(s);
+    if (o && o.version === SETTINGS_VERSION) { S = mergeDeep(clone(DEFAULTS), o); restoredFromLocal = true; }
+  } catch (e) {}
   sanitize();
 }
 function applySettings(obj) { S = mergeDeep(clone(DEFAULTS), obj); sanitize(); update({ ui: true }); }
@@ -397,7 +490,7 @@ function download(blob, name) {
 }
 function toast(msg, err) {
   const t = $('toast'); t.textContent = msg; t.className = 'show' + (err ? ' err' : '');
-  clearTimeout(toast.t); toast.t = setTimeout(() => t.className = '', 2600);
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.className = '', err ? 5000 : 2600);
 }
 
 // ---------- image input ----------
@@ -421,15 +514,26 @@ function setImage(url, name) {
   im.src = url;
 }
 function readJsonFile(file) {
-  file.text().then(t => { applySettings(JSON.parse(t)); toast('Настройки загружены'); })
-    .catch(() => toast('Не удалось прочитать JSON', true));
+  file.text().then(t => {
+    let o;
+    try { o = JSON.parse(t); } catch (e) { toast('Не удалось прочитать JSON', true); return; }
+    // no legacy migration: other versions are converted by hand using the changelog in README.md
+    if (!o || o.version !== SETTINGS_VERSION) {
+      const v = o && o.version != null ? `версии ${o.version}` : 'без версии';
+      setJsonStatus(`✗ ${file.name}: настройки ${v}, нужна версия ${SETTINGS_VERSION} — см. README`);
+      toast(`Настройки ${v} не поддерживаются (нужна ${SETTINGS_VERSION}). Сконвертируйте по README.`, true);
+      return;
+    }
+    applySettings(o); setJsonStatus('✓ ' + file.name, true); toast('Настройки загружены');
+  }).catch(() => toast('Не удалось прочитать файл', true));
 }
 function handleFiles(files) {
   for (const file of files) {
     if (file.type.startsWith('image/')) { readImageFile(file); return; }
     if (file.type === 'application/json' || /\.json$/i.test(file.name)) { readJsonFile(file); return; }
+    if (/\.(woff2?|ttf|otf)$/i.test(file.name)) { window.embedFontFile(file, file.name); return; }
   }
-  toast('Нужна картинка или .json', true);
+  toast('Нужна картинка, шрифт или .json', true);
 }
 let dragDepth = 0;
 window.addEventListener('dragenter', e => { e.preventDefault(); dragDepth++; document.body.classList.add('dragover'); });
@@ -452,6 +556,7 @@ async function exportPNG() {
   const btn = $('btnExport'); btn.disabled = true; btn.textContent = 'Рендер…';
   try {
     const { w: W, h: H } = S.out;
+    await document.fonts.ready;
     render(1);                                     // full-res filter params
     const c = svg.cloneNode(true);
     render();                                      // restore preview params
@@ -494,10 +599,24 @@ function h(tag, props = {}, ...kids) {
   for (const c of kids.flat()) if (c != null) el.append(c);
   return el;
 }
+// basic steps live in #basic (always open), everything else in the collapsible #sections
 function section(title, open, ...kids) {
   const d = h('details', open ? { open: true } : {}, h('summary', {}, title), h('div', { class: 'sec' }, ...kids));
   $('sections').append(d); return d;
 }
+function step(n, title, ...kids) {
+  const d = h('details', { open: true }, h('summary', { onclick: e => e.preventDefault() }, h('span', { class: 'step' }, n), title),
+    h('div', { class: 'sec' }, ...kids));
+  $('basic').append(d); return d;
+}
+const ADV_KEY = 'glassLogo.ui.advanced';
+function setAdvanced(on) {
+  $('sections').classList.toggle('hidden', !on);
+  $('advToggle').setAttribute('aria-expanded', on);
+  $('advToggle').querySelector('span').textContent = on ? 'Скрыть настройки' : 'Все настройки';
+  try { localStorage.setItem(ADV_KEY, on ? '1' : ''); } catch (e) {}
+}
+$('advToggle').onclick = () => setAdvanced($('sections').classList.contains('hidden'));
 const decimals = step => (String(step).split('.')[1] || '').length;
 function slider(path, label, min, max, step, unit = '', opts = {}) {
   const num = h('input', { type: 'number', min, max, step });
@@ -543,8 +662,8 @@ function colorPair(pathTop, pathBot, label, opts = {}) {
   if (opts.visible) controls.push({ refresh() { wrap.classList.toggle('hidden', !opts.visible()); } });
   return wrap;
 }
-function color(path, label) {
-  const w = colorPair(path, null, label);
+function color(path, label, opts) {
+  const w = colorPair(path, null, label, opts);
   w.querySelector('.unit').remove();
   return w;
 }
@@ -555,15 +674,26 @@ function seg(path, options, after) {
   controls.push({ refresh() { btns.forEach((b, i) => b.classList.toggle('on', getP(path) === options[i][0])); } });
   return wrap;
 }
-function check(path, label) {
+function check(path, label, opts = {}) {
   const c = h('input', { type: 'checkbox', onchange: () => { setP(path, c.checked); update({ ui: true }); } });
-  controls.push({ refresh() { c.checked = !!getP(path); } });
-  return h('label', { class: 'row' }, c, label);
+  const wrap = h('label', { class: 'row' }, c, label);
+  controls.push({ refresh() { c.checked = !!getP(path); if (opts.visible) wrap.classList.toggle('hidden', !opts.visible()); } });
+  return wrap;
 }
 function refreshUI() { controls.forEach(c => c.refresh()); }
 
-// --- Картинка
-section('Картинка', true,
+// --- Шаг 1: настройки
+step(1, 'Настройки',
+  h('button', { onclick: () => $('fileJson').click() }, 'Открыть JSON…'),
+  h('div', { class: 'status', id: 'jsonStatus' }),
+  h('div', { class: 'note' }, 'Или перетащите .json в окно.'));
+function setJsonStatus(text, ok) {
+  const el = $('jsonStatus'); el.textContent = text;
+  el.classList.toggle('ok', !!ok); el.classList.toggle('bad', text.startsWith('✗'));
+}
+
+// --- Шаг 2: картинка
+step(2, 'Картинка',
   h('img', { id: 'thumb', class: 'thumb', alt: '' }),
   h('div', { class: 'note', id: 'imgName' }, 'Картинка не загружена'),
   h('div', { class: 'row' },
@@ -575,7 +705,7 @@ section('Картинка', true,
         toast('В буфере нет картинки', true);
       } catch (e) { toast('Нажмите Ctrl+V в окне', true); }
     } }, 'Из буфера')),
-  h('div', { class: 'note' }, 'Также: перетащите файл в окно или Ctrl+V. Картинка не сохраняется в JSON.'));
+  h('div', { class: 'note' }, 'Или перетащите файл в окно / Ctrl+V.'));
 
 // --- Кадр
 const presetList = [[1920, 1080], [2560, 1440], [3840, 2160], [2048, 2048, 'LinkedIn']];
@@ -591,7 +721,7 @@ controls.push({ refresh() {
   presetBtns.forEach((b, i) => b.classList.toggle('on', S.out.w === presetList[i][0] && S.out.h === presetList[i][1]));
   srcBtn.disabled = !IMG; srcBtn.classList.toggle('on', !!IMG && S.out.w === IMG.w && S.out.h === IMG.h);
 } });
-section('Кадр', true,
+section('Кадр', false,
   h('div', { class: 'sub' }, 'Выходное разрешение'),
   h('div', { class: 'wh' }, wIn, h('span', {}, '×'), hIn),
   h('div', { class: 'presets' }, ...presetBtns, srcBtn),
@@ -602,12 +732,88 @@ section('Кадр', true,
   h('div', { class: 'note' }, 'Картинка всегда покрывает кадр. Тащите фон мышью, колесо — зум.'));
 
 // --- Лого
-section('Лого', true,
+section('Лого', false,
   slider('logo.x', 'X (левый край)', 0, 100, 0.01, '% ширины', { hardMin: -100, hardMax: 200 }),
   slider('logo.y', 'Y (верх)', 0, 100, 0.01, '% высоты', { hardMin: -100, hardMax: 200 }),
   slider('logo.width', 'Ширина', 3, 100, 0.01, '% кадра', { hardMax: 300 }),
-  colorPair('logo.top', 'logo.bot', 'Цвет стекла'),
+  slider('logo.opacity', 'Прозрачность', 0, 1, 0.01, '1 = непрозрачно'),
+  check('logo.glass', 'Эффект стекла'),
+  colorPair('logo.top', 'logo.bot', 'Цвет стекла', { visible: () => S.logo.glass }),
+  color('logo.flat', 'Цвет', { visible: () => !S.logo.glass }),
   h('div', { class: 'note' }, 'Лого можно тащить мышью по превью.'));
+
+// --- Текст: шрифт
+function fontPicker() {
+  const sel = h('select', { class: 'grow' });
+  const wsel = h('select', {}, ...[100, 200, 300, 400, 500, 600, 700, 800, 900].map(w => h('option', { value: w }, String(w))));
+  const fileIn = h('input', { type: 'file', accept: '.ttf,.otf,.woff,.woff2,font/*', hidden: true });
+  const note = h('div', { class: 'note' });
+  let installed = null;   // detected lazily: font checks are cheap but not free
+  const fill = () => {
+    installed ||= SYSTEM_FONTS.filter(fontInstalled);
+    const ft = S.text.font, opts = [h('optgroup', { label: 'Встроенный' }, h('option', { value: 'b:' }, 'Inter Light'))];
+    const sys = installed.slice();
+    if (ft.kind === 'system' && !sys.includes(ft.family)) sys.unshift(ft.family);
+    opts.push(h('optgroup', { label: 'Системные' }, ...sys.map(n => h('option', { value: 's:' + n }, n))));
+    if (ft.kind === 'file') opts.push(h('optgroup', { label: 'Загруженный' }, h('option', { value: 'f:' }, ft.family)));
+    sel.replaceChildren(...opts);
+    sel.value = ft.kind === 'builtin' ? 'b:' : ft.kind === 'file' ? 'f:' : 's:' + ft.family;
+  };
+  const setFont = (o) => { Object.assign(S.text.font, { data: '' }, o); fill(); update({ ui: true }); loadFontThenRender(); };
+  sel.addEventListener('change', () => {
+    const [k, ...rest] = sel.value.split(':'), name = rest.join(':');
+    if (k === 'b') setFont({ kind: 'builtin', family: 'Inter Light' });
+    else if (k === 's') setFont({ kind: 'system', family: name });
+  });
+  wsel.addEventListener('change', () => { S.text.font.weight = +wsel.value; update({ ui: true }); loadFontThenRender(); });
+  const embed = (blob, name) => {
+    if (blob.size > 4e6) { toast('Шрифт больше 4 МБ — слишком тяжёлый для встраивания', true); return; }
+    const r = new FileReader();
+    r.onload = () => {
+      let url = r.result;
+      // browsers sniff the font format; give it a font mime so the data URL is accepted everywhere
+      url = url.replace(/^data:[^;,]*/, 'data:font/' + ((name.match(/\.(woff2?|ttf|otf)$/i) || [, 'ttf'])[1].toLowerCase()));
+      setFont({ kind: 'file', family: name.replace(/\.(woff2?|ttf|otf)$/i, ''), data: url });
+      toast('Шрифт встроен: ' + name);
+    };
+    r.readAsDataURL(blob);
+  };
+  fileIn.addEventListener('change', () => { const fl = fileIn.files[0]; if (fl) embed(fl, fl.name); fileIn.value = ''; });
+  window.embedFontFile = embed;
+  const localBtn = h('button', { class: 'grow', title: 'Chrome/Edge: весь список шрифтов компьютера', onclick: async () => {
+    try {
+      const fonts = await window.queryLocalFonts();
+      if (!fonts.length) { toast('Браузер не дал список шрифтов', true); return; }
+      const dl = h('select', { size: 10, style: 'width:100%' },
+        ...fonts.map((fd, i) => h('option', { value: i }, fd.fullName)));
+      const box = h('div', { class: 'sec', style: 'padding:0' }, dl,
+        h('div', { class: 'row' },
+          h('button', { class: 'grow primary', onclick: async () => {
+            const fd = fonts[+dl.value]; if (!fd) return;
+            const blob = await fd.blob();
+            if (blob.size <= 4e6) embed(blob, fd.fullName + '.ttf');
+            else setFont({ kind: 'system', family: fd.family });
+            box.remove();
+          } }, 'Выбрать'),
+          h('button', { onclick: () => box.remove() }, 'Отмена')));
+      localBtn.parentElement.after(box);
+    } catch (e) { toast('Нет доступа к шрифтам системы', true); }
+  } }, 'Все шрифты ПК…');
+  if (!('queryLocalFonts' in window)) localBtn.style.display = 'none';
+  controls.push({ refresh() {
+    const ft = S.text.font;
+    if (!sel.options.length || sel.dataset.k !== ft.kind + ft.family) { fill(); sel.dataset.k = ft.kind + ft.family; }
+    wsel.value = ft.weight; wsel.classList.toggle('hidden', ft.kind !== 'system');
+    note.textContent = ft.kind === 'system'
+      ? 'Системный шрифт берётся с этого компьютера: на другом ПК его может не быть.'
+      : ft.kind === 'file' ? 'Файл встроен в настройки (JSON и автосохранение).' : '';
+    note.classList.toggle('hidden', !note.textContent);
+  } });
+  return h('div', { class: 'sec', style: 'padding:0;gap:6px' },
+    h('div', { class: 'row' }, h('label', {}, 'Шрифт'), sel, wsel),
+    h('div', { class: 'row' }, h('button', { class: 'grow', onclick: () => fileIn.click() }, 'Загрузить файл…'), localBtn, fileIn),
+    note);
+}
 
 // --- Текст
 const underOnly = () => S.text.mode === 'under', freeOnly = () => S.text.mode === 'free';
@@ -625,12 +831,16 @@ section('Текст', false,
   slider('text.gap', 'Отступ от лого', -50, 200, 0.1, '% выс. лого', { visible: underOnly }),
   slider('text.x', 'X (левый край)', 0, 100, 0.01, '%', { visible: freeOnly, hardMin: -100, hardMax: 200 }),
   slider('text.y', 'Y (базовая линия)', 0, 100, 0.01, '%', { visible: freeOnly, hardMin: -100, hardMax: 200 }),
+  fontPicker(),
   slider('text.size', 'Кегль', 3, 60, 0.01, '% выс. лого', { hardMax: 400 }),
   slider('text.spacing', 'Межбуквенный', -0.1, 1.5, 0.01, 'em', { enabled: freeOnly }),
   h('div', { class: 'note', id: 'underNote' }, 'В режиме «под лого» текст растянут на ширину лого, интервал подбирается сам.'),
-  slider('text.density', 'Плотность стекла', 0, 1, 0.01),
-  check('text.ownColor', 'Свой цвет текста'),
-  colorPair('text.top', 'text.bot', 'Цвет', { visible: () => S.text.ownColor }));
+  slider('text.opacity', 'Прозрачность', 0, 1, 0.01, '1 = непрозрачно'),
+  check('text.glass', 'Эффект стекла'),
+  slider('text.density', 'Плотность стекла', 0, 1, 0.01, '', { visible: () => S.text.glass }),
+  check('text.ownColor', 'Свой цвет стекла', { visible: () => S.text.glass }),
+  colorPair('text.top', 'text.bot', 'Цвет', { visible: () => S.text.glass && S.text.ownColor }),
+  color('text.flat', 'Цвет', { visible: () => !S.text.glass }));
 controls.push({ refresh() { $('underNote').classList.toggle('hidden', !underOnly()); } });
 
 // --- Стекло
@@ -670,24 +880,24 @@ section('Тень', false,
   color('shadow.color', 'Цвет'));
 
 // --- Пресеты / JSON
-section('Пресеты / JSON', false,
+section('Сохранить / сбросить', false,
   h('div', { class: 'row' },
     h('button', { class: 'grow', onclick: () => {
       const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
       download(blob, 'glass-logo-settings.json');
     } }, 'Сохранить JSON'),
-    h('button', { class: 'grow', onclick: () => $('fileJson').click() }, 'Загрузить JSON')),
-  h('button', { onclick: () => { if (confirm('Сбросить все настройки к значениям по умолчанию?')) applySettings({}); } }, 'Сбросить всё'),
-  h('div', { class: 'note' }, 'JSON можно и просто перетащить в окно. Настройки автосохраняются в браузере.'));
+    h('button', { class: 'grow', onclick: () => { if (confirm('Сбросить все настройки к значениям по умолчанию?')) { applySettings({}); setJsonStatus('Настройки по умолчанию'); } } }, 'Сбросить всё')),
+  h('div', { class: 'note' }, 'Настройки автосохраняются в браузере.'));
 
 // --- Экспорт
-const nameIn = h('input', { type: 'text', class: 'grow', oninput: () => { S.exportName = nameIn.value; update(); } });
+const nameIn = h('input', { type: 'text', class: 'grow', oninput: () => { S.exportName = nameIn.value; update({ ui: true }); } });
 controls.push({ refresh() { nameIn.placeholder = `glass-logo_${S.out.w}x${S.out.h}.png`; if (document.activeElement !== nameIn) nameIn.value = S.exportName; } });
-section('Экспорт', true,
-  h('div', { class: 'row' }, h('label', {}, 'Имя'), nameIn),
+step(3, 'Экспорт',
   h('button', { class: 'primary', id: 'btnExport', onclick: exportPNG }, 'Экспорт PNG'),
   h('div', { class: 'note', id: 'expNote' }));
-controls.push({ refresh() { $('expNote').textContent = `PNG ${S.out.w}×${S.out.h}. Пустое имя — имя по размеру.`; } });
+section('Имя файла', false, h('div', { class: 'row' }, h('label', {}, 'Имя'), nameIn),
+  h('div', { class: 'note' }, 'Пустое имя — имя по размеру.'));
+controls.push({ refresh() { $('expNote').textContent = `PNG ${S.out.w}×${S.out.h} → ${exportName()}`; } });
 
 // ---------- preview interaction ----------
 let drag = null;
@@ -747,9 +957,12 @@ window.addEventListener('resize', () => update());
 
 // ---------- boot ----------
 loadLocal();
+setJsonStatus(restoredFromLocal ? 'Последние настройки (автосохранение)' : 'Настройки по умолчанию');
+try { setAdvanced(!!localStorage.getItem(ADV_KEY)); } catch (e) { setAdvanced(false); }
 refreshUI();
 render();
 document.fonts.load("300 40px GlassInter").then(() => render()).catch(() => {});
+loadFontThenRender();
 document.fonts.ready.then(() => render());
 </script>
 </body>
